@@ -1,6 +1,5 @@
-{
-  /*extract from TodoList.jsx*/
-}
+import TodoListItem from "./TodoListItem";
+
 function TodoList() {
   const courses = [
     { id: 1, title: "Python" },
@@ -10,9 +9,11 @@ function TodoList() {
   return (
     <div>
       <ul>
-        {courses.map((course) => (
-          <li key={course.id}>{course.title}</li>
-        ))}
+        {courses.map((course) => {
+          return (
+            <TodoListItem key={course.id} title={course.title}></TodoListItem>
+          );
+        })}
       </ul>
       ;
     </div>

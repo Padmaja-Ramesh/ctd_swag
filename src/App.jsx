@@ -5,12 +5,17 @@ import TodoList from "./TodoList";
 import TodoForm from "./TodoForm";
 
 function App() {
-  const [newTodo, setNewTodo] = useState("Example text");
+  const [todoList, setTodoList] = useState([]);
+
+  function addTodo(title) {
+    const newTodo = { title: title, id: Date.now() };
+    setTodoList([...todoList, newTodo]);
+  }
   return (
     <div>
       <h1>Hi, welcome to code the dream swag page</h1>
-      <TodoForm></TodoForm>
-      <p>{newTodo}</p>
+      <TodoForm onAddTodo={addTodo}></TodoForm>
+
       <TodoList></TodoList>
     </div>
   );

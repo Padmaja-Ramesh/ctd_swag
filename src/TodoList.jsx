@@ -1,22 +1,18 @@
 import TodoListItem from "./TodoListItem";
 
-function TodoList() {
-  const courses = [
-    { id: 1, title: "Python" },
-    { id: 2, title: "node.js" },
-    { id: 3, title: "react.js" },
-  ];
+function TodoList({ todoList }) {
   return (
-    <div>
-      <ul>
-        {courses.map((course) => {
-          return (
-            <TodoListItem key={course.id} title={course.title}></TodoListItem>
-          );
-        })}
-      </ul>
-      ;
-    </div>
+    <>
+      {todoList.length > 0 ? (
+        <ul>
+          {todoList.map((todo) => (
+            <TodoListItem key={todo.id} todo={todo.title} />
+          ))}
+        </ul>
+      ) : (
+        <p>Add todo above to get started</p>
+      )}
+    </>
   );
 }
 

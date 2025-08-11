@@ -1,8 +1,8 @@
-function TodoListItem({ title }) {
+function TodoListItem({ todo }) {
   return (
     <div>
       <li>
-        <h3>{title}</h3>
+        <h3>{todo}</h3>
       </li>
     </div>
   );

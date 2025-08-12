@@ -1,0 +1,23 @@
+form {
+  width: 70%;
+  margin: 20px auto;
+}
+
+label {
+  display: block;
+  font-size: 87.5%;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+input,
+textarea,
+select {
+  font-size: 100%;
+  padding: 10px;
+}
+
+.listItems {
+  display: flex;
+  flex-direction: row;
+}

@@ -1,10 +1,15 @@
-function TodoListItem({ title }) {
+function TodoListItem({ todo, onCompleteTodo }) {
   return (
-    <div>
-      <li>
-        <h3>{title}</h3>
-      </li>
-    </div>
+    <form>
+      <div className="listItems">
+        <input
+          type="checkbox"
+          checked={todo.isCompleted}
+          onChange={() => onCompleteTodo(todo.id)}
+        ></input>
+        <label>{todo.title}</label>
+      </div>
+    </form>
   );
 }
 

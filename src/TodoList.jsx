@@ -5,7 +5,7 @@ function TodoList({ todoList, onCompleteTodo }) {
   return (
     <>
       {filteredTodo.length > 0 ? (
-        <ul>
+        <>
           {filteredTodo.map((todo) => (
             <TodoListItem
               key={todo.id}
@@ -13,7 +13,7 @@ function TodoList({ todoList, onCompleteTodo }) {
               onCompleteTodo={onCompleteTodo}
             />
           ))}
-        </ul>
+        </>
       ) : (
         <p>Add todo above to get started</p>
       )}

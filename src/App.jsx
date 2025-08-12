@@ -13,10 +13,18 @@ function App() {
   const [todoList, setTodoList] = useState([]);
 
   function addTodo(title) {
-    const newTodo = { title: title, id: Date.now() };
+    const newTodo = { title: title, id: Date.now(), isCompleted: false };
     setTodoList([...todoList, newTodo]);
     console.log("Updated list:", [...todoList, newTodo]);
   }
+
+  function completeTodo(id) {
+    const updatedTodo = todoList.map((todo) => {
+      return todo.id === id ? { ...todo, isCompleted: true } : todo;
+    });
+    setTodoList(updatedTodo);
+  }
+
   return (
     <div>
       <h1>Hi, welcome to code the dream swag page</h1>
@@ -30,7 +38,7 @@ function App() {
         ))}
       </ul> */}
 
-      <TodoList todoList={todoList}></TodoList>
+      <TodoList todoList={todoList} onCompleteTodo={completeTodo}></TodoList>
     </div>
   );
 }

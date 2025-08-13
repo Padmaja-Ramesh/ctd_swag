@@ -1,7 +1,7 @@
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
-import TodoList from "./TodoList";
+import TodoList from "../src/features/TodoList/TodoList";
 import TodoForm from "../src/features/TodoForm";
 import "./App.css";
 

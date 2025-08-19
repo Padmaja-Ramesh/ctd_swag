@@ -13,6 +13,14 @@ function App() {
   // ];
   const [todoList, setTodoList] = useState([]);
 
+  function updatedTodo(editedTodo) {
+    const updatedTodos = todoList.map((todo) => {
+      console.log(editedTodo);
+      return todo.id == editedTodo.id ? { ...editedTodo } : todo;
+    });
+    setTodoList(updatedTodos);
+  }
+
   function addTodo(title) {
     const newTodo = { title: title, id: Date.now(), isCompleted: false };
     setTodoList([...todoList, newTodo]);
@@ -39,7 +47,11 @@ function App() {
         ))}
       </ul> */}
 
-      <TodoList todoList={todoList} onCompleteTodo={completeTodo}></TodoList>
+      <TodoList
+        todoList={todoList}
+        onCompleteTodo={completeTodo}
+        onUpdateTodo={updatedTodo}
+      ></TodoList>
     </div>
   );
 }

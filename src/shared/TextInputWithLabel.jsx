@@ -8,6 +8,7 @@ function TextInputWithLabel({ elementId, labelText, onChange, ref, value }) {
         onChange={onChange}
         red={ref}
         value={value}
+        placeholder="add todo"
       ></input>
     </>
   );

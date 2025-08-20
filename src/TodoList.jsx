@@ -1,22 +1,23 @@
 import TodoListItem from "./TodoListItem";
 
-function TodoList() {
-  const courses = [
-    { id: 1, title: "Python" },
-    { id: 2, title: "node.js" },
-    { id: 3, title: "react.js" },
-  ];
+function TodoList({ todoList, onCompleteTodo }) {
+  const filteredTodo = todoList.filter((todo) => todo.isCompleted == false);
   return (
-    <div>
-      <ul>
-        {courses.map((course) => {
-          return (
-            <TodoListItem key={course.id} title={course.title}></TodoListItem>
-          );
-        })}
-      </ul>
-      ;
-    </div>
+    <>
+      {filteredTodo.length > 0 ? (
+        <>
+          {filteredTodo.map((todo) => (
+            <TodoListItem
+              key={todo.id}
+              todo={todo}
+              onCompleteTodo={onCompleteTodo}
+            />
+          ))}
+        </>
+      ) : (
+        <p>Add todo above to get started</p>
+      )}
+    </>
   );
 }
 

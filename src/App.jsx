@@ -1,8 +1,8 @@
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
-import TodoList from "./TodoList";
-import TodoForm from "./TodoForm";
+import TodoList from "../src/features/TodoList/TodoList";
+import TodoForm from "../src/features/TodoForm";
 import "./App.css";
 
 function App() {
@@ -12,6 +12,14 @@ function App() {
   //   { id: 3, title: "react.js" },
   // ];
   const [todoList, setTodoList] = useState([]);
+
+  function updatedTodo(editedTodo) {
+    const updatedTodos = todoList.map((todo) => {
+      console.log(editedTodo);
+      return todo.id == editedTodo.id ? { ...editedTodo } : todo;
+    });
+    setTodoList(updatedTodos);
+  }
 
   function addTodo(title) {
     const newTodo = { title: title, id: Date.now(), isCompleted: false };
@@ -39,7 +47,11 @@ function App() {
         ))}
       </ul> */}
 
-      <TodoList todoList={todoList} onCompleteTodo={completeTodo}></TodoList>
+      <TodoList
+        todoList={todoList}
+        onCompleteTodo={completeTodo}
+        onUpdateTodo={updatedTodo}
+      ></TodoList>
     </div>
   );
 }

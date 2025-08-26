@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import TodoList from "../src/features/TodoList/TodoList";
@@ -12,6 +12,10 @@ function App() {
   //   { id: 3, title: "react.js" },
   // ];
   const [todoList, setTodoList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
+  const token = `Bearer ${import.meta.env.VITE_PAT}`;
 
   function updatedTodo(editedTodo) {
     const updatedTodos = todoList.map((todo) => {
@@ -22,7 +26,11 @@ function App() {
   }
 
   function addTodo(title) {
-    const newTodo = { title: title, id: Date.now(), isCompleted: false };
+    const newTodo = {
+      title: title,
+      createdTime: Date.now(),
+      isCompleted: false,
+    };
     setTodoList([...todoList, newTodo]);
     console.log("Updated list:", [...todoList, newTodo]);
   }
@@ -33,6 +41,42 @@ function App() {
     });
     setTodoList(updatedTodo);
   }
+
+  useEffect(() => {
+    const fetchTodos = async () => {
+      setIsLoading(true);
+      const options = {
+        method: "GET",
+        headers: { Authorization: token },
+      };
+      try {
+        const resp = await fetch(url, options);
+        if (!resp.ok) {
+          throw new Error(resp.message);
+        } else {
+          let response = await resp.json();
+          //console.log(response);
+          const fetchResp = response.records.map((record) => {
+            console.log(record);
+            const todo = {
+              id: record.id,
+              ...record.fields,
+            };
+            if (!todo.isCompleted) {
+              todo.isCompleted = false;
+            }
+            console.log(todo);
+          });
+          return todo;
+        }
+      } catch (error) {
+        setErrorMessage(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchTodos();
+  }, []);
 
   return (
     <div>
@@ -46,12 +90,22 @@ function App() {
           </li>
         ))}
       </ul> */}
-
-      <TodoList
-        todoList={todoList}
-        onCompleteTodo={completeTodo}
-        onUpdateTodo={updatedTodo}
-      ></TodoList>
+      <>
+        {errorMessage ? (
+          <div>
+            <hr />
+            <p>{errorMessage}</p>
+            <button onClick={() => setErrorMessage("")}>dismiss </button>
+          </div>
+        ) : (
+          <TodoList
+            todoList={todoList}
+            onCompleteTodo={completeTodo}
+            onUpdateTodo={updatedTodo}
+            isLoading={isLoading}
+          ></TodoList>
+        )}
+      </>
     </div>
   );
 }

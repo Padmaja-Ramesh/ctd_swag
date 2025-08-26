@@ -1,6 +1,6 @@
 import TodoListItem from "./TodoListItem";
 
-function TodoList({ todoList, onCompleteTodo, onUpdateTodo }) {
+function TodoList({ todoList, onCompleteTodo, onUpdateTodo, isLoading }) {
   const filteredTodo = todoList.filter((todo) => todo.isCompleted == false);
   return (
     <>
@@ -16,7 +16,13 @@ function TodoList({ todoList, onCompleteTodo, onUpdateTodo }) {
           ))}
         </>
       ) : (
-        <p>Add todo above to get started</p>
+        <>
+          {isLoading ? (
+            <p>Todo list loading...</p>
+          ) : (
+            <p>Add todo above to get started</p>
+          )}
+        </>
       )}
     </>
   );

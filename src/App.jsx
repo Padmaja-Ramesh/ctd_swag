@@ -13,27 +13,103 @@ function App() {
   // ];
   const [todoList, setTodoList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
   const token = `Bearer ${import.meta.env.VITE_PAT}`;
 
-  function updatedTodo(editedTodo) {
-    const updatedTodos = todoList.map((todo) => {
-      console.log(editedTodo);
-      return todo.id == editedTodo.id ? { ...editedTodo } : todo;
-    });
-    setTodoList(updatedTodos);
+  async function updatedTodo(editedTodo) {
+    setIsSaving(true);
+    const originalTodo = editedTodo.find((todo) => todo.id === editedTodo.id);
+    const payload = {
+      records: [
+        {
+          id: editedTodo.id,
+          fields: {
+            title: editedTodo.title,
+            isCompleted: editedTodo.isCompleted,
+          },
+        },
+      ],
+    };
+    const options = {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    };
+
+    try {
+      const resp = await fetch(url, options);
+      if (!resp.ok) {
+        throw new Error(resp.message);
+      }
+    } catch (error) {
+      console.log(error);
+      setErrorMessage(`${error.message}. Reverting todo...`);
+      const revertedTodo = { ...originalTodo };
+      setTodoList([...revertedTodo]);
+    } finally {
+      setIsSaving(false);
+    }
+
+    // const updatedTodos = todoList.map((todo) => {
+    //   console.log(editedTodo);
+    //   return todo.id == editedTodo.id ? { ...editedTodo } : todo;
+    // });
+    // setTodoList(updatedTodos);
   }
 
-  function addTodo(title) {
-    const newTodo = {
-      title: title,
-      createdTime: Date.now(),
-      isCompleted: false,
+  // function addTodo(title) {
+  //   const newTodo = {
+  //     title: title,
+  //     createdTime: Date.now(),
+  //     isCompleted: false,
+  //   };
+  //   setTodoList([...todoList, newTodo]);
+  //   console.log("Updated list:", [...todoList, newTodo]);
+  // }
+  //}
+
+  const addTodo = async (newTodo) => {
+    const payload = {
+      records: [
+        {
+          fields: {
+            title: newTodo.title,
+            isCompleted: newTodo.isCompleted,
+          },
+        },
+      ],
     };
-    setTodoList([...todoList, newTodo]);
-    console.log("Updated list:", [...todoList, newTodo]);
-  }
+    const options = {
+      method: "POST",
+      headers: { Authorization: token, "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    };
+
+    try {
+      setIsSaving(true);
+      const resp = await fetch(url, options);
+
+      if (!resp.ok) {
+        throw new Error("error adding new todo...");
+      }
+      const { records } = await resp.json();
+      const savedTodo = {
+        id: records[0].id,
+        title: records[0].fields.title,
+        isCompleted: records[0].fields.isCompleted,
+      };
+      if (!records[0].fields.isCompleted) {
+        savedTodo.isCompleted = false;
+      }
+      setTodoList([...todoList, savedTodo]);
+    } catch (error) {
+      setErrorMessage(error.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   function completeTodo(id) {
     const updatedTodo = todoList.map((todo) => {

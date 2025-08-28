@@ -20,21 +20,21 @@ function App() {
 
   async function updatedTodo(editedTodo) {
     setIsSaving(true);
-    const originalTodo = editedTodo.find((todo) => todo.id === editedTodo.id);
+    const originalTodo = todoList.find((todo) => todo.id === editedTodo.id);
     const payload = {
       records: [
         {
           id: editedTodo.id,
           fields: {
             title: editedTodo.title,
-            isCompleted: editedTodo.isCompleted,
+            isCompleted: editedTodo.isCompleted || false,
           },
         },
       ],
     };
     const options = {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Authorization: token },
       body: JSON.stringify(payload),
     };
 
@@ -46,8 +46,13 @@ function App() {
     } catch (error) {
       console.log(error);
       setErrorMessage(`${error.message}. Reverting todo...`);
-      const revertedTodo = { ...originalTodo };
-      setTodoList([...revertedTodo]);
+      setTodoList((prev) =>
+        prev.map((todo) =>
+          todo.id === editedTodo.id
+            ? { ...todo, ...data.records[0].fields }
+            : todo
+        )
+      );
     } finally {
       setIsSaving(false);
     }
@@ -71,12 +76,13 @@ function App() {
   //}
 
   const addTodo = async (newTodo) => {
+    console.log(newTodo);
     const payload = {
       records: [
         {
           fields: {
-            title: newTodo.title,
-            isCompleted: newTodo.isCompleted,
+            title: newTodo,
+            isCompleted: newTodo.isCompleted || false,
           },
         },
       ],
@@ -131,19 +137,18 @@ function App() {
           throw new Error(resp.message);
         } else {
           let response = await resp.json();
-          //console.log(response);
+          console.log(response);
           const fetchResp = response.records.map((record) => {
             console.log(record);
             const todo = {
               id: record.id,
               ...record.fields,
             };
-            if (!todo.isCompleted) {
-              todo.isCompleted = false;
-            }
             console.log(todo);
+            return todo;
           });
-          return todo;
+          setTodoList(fetchResp);
+          console.log("todoList in App:", todoList);
         }
       } catch (error) {
         setErrorMessage(error.message);

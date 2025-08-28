@@ -76,7 +76,7 @@ function App() {
   //}
 
   const addTodo = async (newTodo) => {
-    console.log(newTodo);
+    console.log("new data added", newTodo);
     const payload = {
       records: [
         {
@@ -137,18 +137,15 @@ function App() {
           throw new Error(resp.message);
         } else {
           let response = await resp.json();
-          console.log(response);
           const fetchResp = response.records.map((record) => {
-            console.log(record);
             const todo = {
               id: record.id,
               ...record.fields,
             };
-            console.log(todo);
             return todo;
           });
           setTodoList(fetchResp);
-          console.log("todoList in App:", todoList);
+          console.log("todoList in App from db:", todoList);
         }
       } catch (error) {
         setErrorMessage(error.message);

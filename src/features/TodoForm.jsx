@@ -8,7 +8,7 @@ function TodoForm({ onAddTodo }) {
     event.preventDefault();
     onAddTodo(workingTodoTitle);
     setWorkingTodoTitle("");
-    todoTitleInput.current.focus();
+    //todoTitleInput.current.focus();
   }
   return (
     <div>

@@ -4,6 +4,7 @@ import viteLogo from "/vite.svg";
 import TodoList from "../src/features/TodoList/TodoList";
 import TodoForm from "../src/features/TodoForm";
 import "./App.css";
+import TodosViewForm from "./features/TodosViewForm";
 
 const encodeUrl = ({ sortField, sortDirection }) => {
   let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
@@ -208,6 +209,13 @@ function App() {
           ></TodoList>
         )}
       </>
+      <hr></hr>
+      <TodosViewForm
+        sortDirection={sortDirection}
+        setSortDirection={setSortDirection}
+        sortField={sortField}
+        setSortField={setSortField}
+      ></TodosViewForm>
     </div>
   );
 }

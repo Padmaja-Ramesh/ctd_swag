@@ -20,8 +20,8 @@ function TodosViewForm({
       <div>
         <label>Direction</label>
         <select onChange={(e) => setSortDirection(e.target.value)}>
-          <option value="Ascending">ASC </option>
-          <option value="Descending">DESC</option>
+          <option value="asc">Ascending </option>
+          <option value="desc">Desending</option>
         </select>
       </div>
     </form>

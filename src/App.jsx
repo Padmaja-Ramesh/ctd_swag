@@ -143,6 +143,9 @@ function App() {
     else {
       const completedTodo = { ...findTodo, isCompleted: true };
       updatedTodo(completedTodo);
+      setTodoList((prevTodos) =>
+        prevTodos.map((todo) => (todo.id === id ? completedTodo : todo))
+      );
     }
   }
 

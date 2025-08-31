@@ -5,6 +5,13 @@ import TodoList from "../src/features/TodoList/TodoList";
 import TodoForm from "../src/features/TodoForm";
 import "./App.css";
 
+const encodeUrl = ({ sortField, sortDirection }) => {
+  let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
+  return encodeURI(`${url}?${sortQuery}`);
+};
+
+const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
+
 function App() {
   // const courses = [
   //   { id: 1, title: "Python" },
@@ -15,8 +22,10 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
+
   const token = `Bearer ${import.meta.env.VITE_PAT}`;
+  const [sortField, setSortField] = useState("createdTime");
+  const [sortDirection, setSortDirection] = useState("desc");
 
   async function updatedTodo(editedTodo) {
     setIsSaving(true);
@@ -39,13 +48,17 @@ function App() {
     };
 
     try {
-      const resp = await fetch(url, options);
+      const resp = await fetch(
+        encodeUrl({ sortField, sortDirection }),
+        options
+      );
       if (!resp.ok) {
         throw new Error(resp.message);
       }
     } catch (error) {
       console.log(error);
       setErrorMessage(`${error.message}. Reverting todo...`);
+
       setTodoList((prev) =>
         prev.map((todo) =>
           todo.id === editedTodo.id
@@ -95,7 +108,10 @@ function App() {
 
     try {
       setIsSaving(true);
-      const resp = await fetch(url, options);
+      const resp = await fetch(
+        encodeUrl({ sortField, sortDirection }),
+        options
+      );
 
       if (!resp.ok) {
         throw new Error("error adding new todo...");
@@ -118,10 +134,15 @@ function App() {
   };
 
   function completeTodo(id) {
-    const updatedTodo = todoList.map((todo) => {
-      return todo.id === id ? { ...todo, isCompleted: true } : todo;
+    const findTodo = todoList.find((todo) => {
+      return todo.id === id;
     });
-    setTodoList(updatedTodo);
+
+    if (!findTodo) return;
+    else {
+      const completedTodo = { ...findTodo, isCompleted: true };
+      updatedTodo(completedTodo);
+    }
   }
 
   useEffect(() => {
@@ -132,7 +153,10 @@ function App() {
         headers: { Authorization: token },
       };
       try {
-        const resp = await fetch(url, options);
+        const resp = await fetch(
+          encodeUrl({ sortField, sortDirection }),
+          options
+        );
         if (!resp.ok) {
           throw new Error(resp.message);
         } else {
@@ -154,7 +178,7 @@ function App() {
       }
     };
     fetchTodos();
-  }, []);
+  }, [sortField, sortDirection]);
 
   return (
     <div>

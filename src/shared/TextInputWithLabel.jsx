@@ -1,7 +1,9 @@
 function TextInputWithLabel({ elementId, labelText, onChange, ref, value }) {
   return (
     <>
-      <label htmlFor={elementId}>{labelText}</label>
+      <label htmlFor={elementId} style={{ padding: 10 }}>
+        {labelText}
+      </label>
       <input
         type="text"
         id={elementId}

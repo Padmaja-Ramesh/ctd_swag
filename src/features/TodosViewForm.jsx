@@ -11,8 +11,8 @@ function TodosViewForm({
   }
   return (
     <form onSubmit={preventRefresh}>
-      <div>
-        <label> Search Todos</label>
+      <div style={{ display: "flex" }}>
+        <label style={{ padding: 10 }}> Search Todos</label>
         <input
           type="text"
           value={queryString}
@@ -23,14 +23,12 @@ function TodosViewForm({
         <button onClick={() => setQueryString("")} disabled={!queryString}>
           Clear
         </button>
-      </div>
-      <div>
-        <label>Sort by</label>
+        <label style={{ padding: 10 }}>Sort by</label>
         <select onChange={(e) => setSortField(e.target.value)}>
           <option value="title">Title</option>
           <option value="createdTime">Time added</option>
         </select>
-        <label>Direction</label>
+        <label style={{ padding: 10 }}>Direction</label>
         <select onChange={(e) => setSortDirection(e.target.value)}>
           <option value="asc">Ascending </option>
           <option value="desc">Desending</option>

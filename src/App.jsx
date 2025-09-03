@@ -192,15 +192,25 @@ function App() {
   return (
     <div>
       <h1>Hi, welcome to code the dream swag page</h1>
-
-      <TodoForm onAddTodo={addTodo}></TodoForm>
-      {/* <ul>
+      <div style={{ display: "flex" }}>
+        <TodoForm onAddTodo={addTodo}></TodoForm>
+        {/* <ul>
         {courses.map((course) => (
           <li key={course.id}>
             <h3>{course.title}</h3>
           </li>
         ))}
       </ul> */}
+        <TodosViewForm
+          sortDirection={sortDirection}
+          setSortDirection={setSortDirection}
+          sortField={sortField}
+          setSortField={setSortField}
+          queryString={queryString}
+          setQueryString={setQueryString}
+        ></TodosViewForm>
+      </div>
+      <hr></hr>
       <>
         {errorMessage ? (
           <div>
@@ -217,15 +227,6 @@ function App() {
           ></TodoList>
         )}
       </>
-      <hr></hr>
-      <TodosViewForm
-        sortDirection={sortDirection}
-        setSortDirection={setSortDirection}
-        sortField={sortField}
-        setSortField={setSortField}
-        queryString={queryString}
-        setQueryString={setQueryString}
-      ></TodosViewForm>
     </div>
   );
 }

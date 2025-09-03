@@ -12,7 +12,7 @@ function TodoForm({ onAddTodo }) {
   }
   return (
     <div>
-      <form onSubmit={handleAddTodo}>
+      <form onSubmit={handleAddTodo} style={{ display: "flex" }}>
         <TextInputWithLabel
           ref={todoTitleInput}
           value={workingTodoTitle}

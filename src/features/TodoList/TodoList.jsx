@@ -1,13 +1,18 @@
 import TodoListItem from "./TodoListItem";
 
 function TodoList({ todoList, onCompleteTodo, onUpdateTodo, isLoading }) {
-  const filteredTodo = todoList.filter((todo) => !todo.isCompleted == true);
-  console.log("filtered todo", filteredTodo);
+  const incompletedTodoList = todoList.filter(
+    (todo) => !todo.isCompleted == true
+  );
+  // const completedTodoList = todoList.filter((todo) => todo.isCompleted == true);
+
+  console.log("filtered todo", incompletedTodoList);
   return (
     <>
-      {filteredTodo.length > 0 ? (
+      {incompletedTodoList.length > 0 ? (
         <>
-          {filteredTodo.map((todo) => (
+          <h1> Existing/ Pending todo list Items are : </h1>
+          {incompletedTodoList.map((todo) => (
             <TodoListItem
               key={todo.id}
               todo={todo}
@@ -15,6 +20,15 @@ function TodoList({ todoList, onCompleteTodo, onUpdateTodo, isLoading }) {
               onUpdateTodo={onUpdateTodo}
             />
           ))}
+          {/* <h1>Completed todo list Items are : </h1>
+          {completedTodoList.map((todo) => (
+            <TodoListItem
+              key={todo.id}
+              todo={todo}
+              onCompleteTodo={onCompleteTodo}
+              onUpdateTodo={onUpdateTodo}
+            />
+          ))} */}
         </>
       ) : (
         <>

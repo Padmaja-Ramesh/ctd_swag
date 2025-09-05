@@ -4,6 +4,18 @@ import viteLogo from "/vite.svg";
 import TodoList from "../src/features/TodoList/TodoList";
 import TodoForm from "../src/features/TodoForm";
 import "./App.css";
+import TodosViewForm from "./features/TodosViewForm";
+
+const encodeUrl = ({ sortField, sortDirection, queryString }) => {
+  let searchQuery = "";
+  let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
+  if (queryString) {
+    searchQuery = `&filterByFormula=SEARCH("${queryString}",+title)`;
+  }
+  return encodeURI(`${url}?${sortQuery}${searchQuery}`);
+};
+
+const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 
 function App() {
   // const courses = [
@@ -15,8 +27,11 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
+
   const token = `Bearer ${import.meta.env.VITE_PAT}`;
+  const [sortField, setSortField] = useState("createdTime");
+  const [sortDirection, setSortDirection] = useState("desc");
+  const [queryString, setQueryString] = useState("");
 
   async function updatedTodo(editedTodo) {
     setIsSaving(true);
@@ -39,13 +54,17 @@ function App() {
     };
 
     try {
-      const resp = await fetch(url, options);
+      const resp = await fetch(
+        encodeUrl({ sortField, sortDirection, queryString }),
+        options
+      );
       if (!resp.ok) {
         throw new Error(resp.message);
       }
     } catch (error) {
       console.log(error);
       setErrorMessage(`${error.message}. Reverting todo...`);
+
       setTodoList((prev) =>
         prev.map((todo) =>
           todo.id === editedTodo.id
@@ -95,7 +114,10 @@ function App() {
 
     try {
       setIsSaving(true);
-      const resp = await fetch(url, options);
+      const resp = await fetch(
+        encodeUrl({ sortField, sortDirection, queryString }),
+        options
+      );
 
       if (!resp.ok) {
         throw new Error("error adding new todo...");
@@ -118,10 +140,18 @@ function App() {
   };
 
   function completeTodo(id) {
-    const updatedTodo = todoList.map((todo) => {
-      return todo.id === id ? { ...todo, isCompleted: true } : todo;
+    const findTodo = todoList.find((todo) => {
+      return todo.id === id;
     });
-    setTodoList(updatedTodo);
+
+    if (!findTodo) return;
+    else {
+      const completedTodo = { ...findTodo, isCompleted: true };
+      updatedTodo(completedTodo);
+      setTodoList((prevTodos) =>
+        prevTodos.map((todo) => (todo.id === id ? completedTodo : todo))
+      );
+    }
   }
 
   useEffect(() => {
@@ -132,7 +162,10 @@ function App() {
         headers: { Authorization: token },
       };
       try {
-        const resp = await fetch(url, options);
+        const resp = await fetch(
+          encodeUrl({ sortField, sortDirection, queryString }),
+          options
+        );
         if (!resp.ok) {
           throw new Error(resp.message);
         } else {
@@ -154,20 +187,30 @@ function App() {
       }
     };
     fetchTodos();
-  }, []);
+  }, [sortField, sortDirection, queryString]);
 
   return (
     <div>
       <h1>Hi, welcome to code the dream swag page</h1>
-
-      <TodoForm onAddTodo={addTodo}></TodoForm>
-      {/* <ul>
+      <div style={{ display: "flex" }}>
+        <TodoForm onAddTodo={addTodo}></TodoForm>
+        {/* <ul>
         {courses.map((course) => (
           <li key={course.id}>
             <h3>{course.title}</h3>
           </li>
         ))}
       </ul> */}
+        <TodosViewForm
+          sortDirection={sortDirection}
+          setSortDirection={setSortDirection}
+          sortField={sortField}
+          setSortField={setSortField}
+          queryString={queryString}
+          setQueryString={setQueryString}
+        ></TodosViewForm>
+      </div>
+      <hr></hr>
       <>
         {errorMessage ? (
           <div>

@@ -27,7 +27,7 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
     setWorkingTitle(todo.title);
   }, [todo]);
   return (
-    <form onSubmit={handleUpdate}>
+    <form onSubmit={handleUpdate} style={{ fontSize: "xx-large" }}>
       {isEditing ? (
         <>
           <TextInputWithLabel value={workingTitle} onChange={handleEdit} />

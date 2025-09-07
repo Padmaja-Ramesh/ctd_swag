@@ -1,19 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import TodoList from "../src/features/TodoList/TodoList";
 import TodoForm from "../src/features/TodoForm";
 import "./App.css";
 import TodosViewForm from "./features/TodosViewForm";
-
-const encodeUrl = ({ sortField, sortDirection, queryString }) => {
-  let searchQuery = "";
-  let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
-  if (queryString) {
-    searchQuery = `&filterByFormula=SEARCH("${queryString}",+title)`;
-  }
-  return encodeURI(`${url}?${sortQuery}${searchQuery}`);
-};
 
 const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 
@@ -32,6 +23,14 @@ function App() {
   const [sortField, setSortField] = useState("createdTime");
   const [sortDirection, setSortDirection] = useState("desc");
   const [queryString, setQueryString] = useState("");
+  const encodeUrl = useCallback(() => {
+    let searchQuery = "";
+    let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
+    if (queryString) {
+      searchQuery = `&filterByFormula=SEARCH("${queryString}",+title)`;
+    }
+    return encodeURI(`${url}?${sortQuery}${searchQuery}`);
+  }, [sortField, sortDirection, queryString]);
 
   async function updatedTodo(editedTodo) {
     setIsSaving(true);
@@ -54,10 +53,7 @@ function App() {
     };
 
     try {
-      const resp = await fetch(
-        encodeUrl({ sortField, sortDirection, queryString }),
-        options
-      );
+      const resp = await fetch(encodeUrl(), options);
       if (!resp.ok) {
         throw new Error(resp.message);
       }
@@ -114,10 +110,7 @@ function App() {
 
     try {
       setIsSaving(true);
-      const resp = await fetch(
-        encodeUrl({ sortField, sortDirection, queryString }),
-        options
-      );
+      const resp = await fetch(encodeUrl(), options);
 
       if (!resp.ok) {
         throw new Error("error adding new todo...");
@@ -162,10 +155,7 @@ function App() {
         headers: { Authorization: token },
       };
       try {
-        const resp = await fetch(
-          encodeUrl({ sortField, sortDirection, queryString }),
-          options
-        );
+        const resp = await fetch(encodeUrl(), options);
         if (!resp.ok) {
           throw new Error(resp.message);
         } else {

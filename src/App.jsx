@@ -203,7 +203,7 @@ function App() {
       <hr></hr>
       <div className={styles.center}>
         {errorMessage ? (
-          <div>
+          <div className={styles.errorborder}>
             <hr />
             <p>{errorMessage}</p>
             <button onClick={() => setErrorMessage("")}>dismiss </button>
@@ -216,11 +216,6 @@ function App() {
             isLoading={isLoading}
           ></TodoList>
         )}
-      </div>
-      <div className={styles.errorborder}>
-        <hr />
-        <p>{errorMessage}</p>
-        <button onClick={() => setErrorMessage("")}>dismiss </button>
       </div>
     </div>
   );

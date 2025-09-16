@@ -1,0 +1,8 @@
+.listitem {
+  font-size: xx-large;
+  display: flex;
+  flex-direction: row;
+  border: 8px solid wheat;
+  justify-content: center;
+  padding-bottom: 4px;
+}

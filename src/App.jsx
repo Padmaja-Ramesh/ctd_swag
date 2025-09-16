@@ -5,6 +5,7 @@ import TodoList from "../src/features/TodoList/TodoList";
 import TodoForm from "../src/features/TodoForm";
 import "./App.css";
 import TodosViewForm from "./features/TodosViewForm";
+import styles from "./App.module.css";
 
 const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 
@@ -168,7 +169,6 @@ function App() {
             return todo;
           });
           setTodoList(fetchResp);
-          console.log("todoList in App from db:", todoList);
         }
       } catch (error) {
         setErrorMessage(error.message);
@@ -181,7 +181,7 @@ function App() {
 
   return (
     <div>
-      <h1>Hi, welcome to code the dream swag page</h1>
+      <h1 className={styles.heading}> Code the dream swag </h1>
       <div style={{ display: "flex" }}>
         <TodoForm onAddTodo={addTodo}></TodoForm>
         {/* <ul>
@@ -201,7 +201,7 @@ function App() {
         ></TodosViewForm>
       </div>
       <hr></hr>
-      <>
+      <div className={styles.center}>
         {errorMessage ? (
           <div>
             <hr />
@@ -216,7 +216,12 @@ function App() {
             isLoading={isLoading}
           ></TodoList>
         )}
-      </>
+      </div>
+      <div className={styles.errorborder}>
+        <hr />
+        <p>{errorMessage}</p>
+        <button onClick={() => setErrorMessage("")}>dismiss </button>
+      </div>
     </div>
   );
 }

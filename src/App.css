@@ -15,9 +15,14 @@ textarea,
 select {
   font-size: 100%;
   padding: 10px;
+  background: antiquewhite;
 }
 
 .listItems {
   display: flex;
   flex-direction: row;
+}
+
+div {
+  background-color: antiquewhite;
 }

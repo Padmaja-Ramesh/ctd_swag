@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { StyledButton } from "../styles/StyledButton";
 
 function TodosViewForm({
   setSortDirection,
@@ -30,12 +31,12 @@ function TodosViewForm({
             setLocalQueryString(e.target.value);
           }}
         ></input>
-        <button
+        <StyledButton
           onClick={() => setLocalQueryString("")}
           disabled={!localQueryString}
         >
           Clear
-        </button>
+        </StyledButton>
         <label style={{ padding: 10 }}>Sort by</label>
         <select onChange={(e) => setSortField(e.target.value)}>
           <option value="title">Title</option>

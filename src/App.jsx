@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useReducer } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import TodoList from "../src/features/TodoList/TodoList";
@@ -6,6 +6,11 @@ import TodoForm from "../src/features/TodoForm";
 import "./App.css";
 import TodosViewForm from "./features/TodosViewForm";
 import styles from "./App.module.css";
+import {
+  reducer as todosReducer,
+  actions as todoActions,
+  initialState as initialTodosState,
+} from "./reducers/todos.reducer";
 
 const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 
@@ -16,6 +21,7 @@ function App() {
   //   { id: 3, title: "react.js" },
   // ];
   const token = `Bearer ${import.meta.env.VITE_PAT}`;
+  const [todoState, dispatch] = useReducer(initialTodosState, todosReducer);
 
   const [todoList, setTodoList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);

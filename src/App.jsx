@@ -37,6 +37,9 @@ function App() {
   async function updatedTodo(editedTodo) {
     setIsSaving(true);
     const originalTodo = todoList.find((todo) => todo.id === editedTodo.id);
+    setTodoList((prev) =>
+      prev.map((todo) => (todo.id === editedTodo.id ? editedTodo : todo))
+    );
     const payload = {
       records: [
         {
@@ -63,12 +66,9 @@ function App() {
       console.log(error);
       setErrorMessage(`${error.message}. Reverting todo...`);
 
+      // revert UI back to original todo
       setTodoList((prev) =>
-        prev.map((todo) =>
-          todo.id === editedTodo.id
-            ? { ...todo, ...data.records[0].fields }
-            : todo
-        )
+        prev.map((todo) => (todo.id === originalTodo.id ? originalTodo : todo))
       );
     } finally {
       setIsSaving(false);

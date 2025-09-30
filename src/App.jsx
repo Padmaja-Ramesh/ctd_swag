@@ -15,15 +15,16 @@ function App() {
   //   { id: 2, title: "node.js" },
   //   { id: 3, title: "react.js" },
   // ];
+  const token = `Bearer ${import.meta.env.VITE_PAT}`;
+
   const [todoList, setTodoList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
-  const token = `Bearer ${import.meta.env.VITE_PAT}`;
   const [sortField, setSortField] = useState("createdTime");
   const [sortDirection, setSortDirection] = useState("desc");
   const [queryString, setQueryString] = useState("");
+
   const encodeUrl = useCallback(() => {
     let searchQuery = "";
     let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;

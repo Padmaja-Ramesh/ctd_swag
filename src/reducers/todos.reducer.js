@@ -1,6 +1,6 @@
 import TodoList from "../features/TodoList/TodoList";
 
-const actions = {
+export const actions = {
   //actions in useEffect that loads todos
   fetchTodos: "fetchTodos",
   loadTodos: "loadTodos",
@@ -17,11 +17,17 @@ const actions = {
   revertTodo: "revertTodo",
   //action on Dismiss Error button
   clearError: "clearError",
+  // error message
+  setErrorMessage: "errorMessage",
+  setSortDirection: "setSortDirection",
+  setSortField: "setSortField",
+  setQueryString: "setQueryString",
 };
 
-function reducer(state = initialState, action) {
+export function reducer(state = initialState, action) {
   switch (action.type) {
     case actions.fetchTodos:
+      console.log(state);
       return {
         isLoading: true,
         ...state,
@@ -36,23 +42,21 @@ function reducer(state = initialState, action) {
         id: record.id,
         ...record.fields,
       }));
+      console.log(updateTodos);
       return {
-        TodoList: updateTodos,
-        isLoading: true,
         ...state,
+        TodoList: updateTodos,
+        isLoading: false,
       };
     // Copy the logic that completes a todo into completeTodo clause.
     // Replace id with action.id wherever the original completeTodo uses its argument.
     // Return the state with the updatedTodos destructured into the todoList property.
     case actions.completeTodo:
-      const findTodo = state.TodoList.map((todo) => todo.id === action.id);
-      completedTodo = { ...findTodo, isCompleted: true };
-      updatedTodos = state.TodoList.map((todo) =>
-        todo.id === action.id ? completedTodo : todo
-      );
       return {
         ...state,
-        TodoList: updatedTodos,
+        TodoList: state.TodoList.map((todo) =>
+          todo.id === action.id ? { ...todo, isCompleted: true } : todo
+        ),
       };
     // The logic for revertTodo should be the same as `updateTodo.
     // If yes: make sure that the revertTodo case is written directly above updateTodo and remove the return statement. This will cause the action to fall through to the updateTodo case.
@@ -65,7 +69,7 @@ function reducer(state = initialState, action) {
     // If there is an error property on the action object, add an errorMessage property onto updatedTodos set to action.error.message.
     // At the end of the clause, return the updated state.
     case actions.updateTodo:
-      const updatedTodos = action.TodoList.map((todo) =>
+      const updatedTodos = state.TodoList.map((todo) =>
         todo.id === action.editedTodo.id ? action.editedTodo : todo
       );
       const updatedState = {
@@ -74,7 +78,10 @@ function reducer(state = initialState, action) {
         isSaving: false,
       };
       if (action.error) {
-        updatedTodos.errorMessage = action.error.message;
+        return {
+          ...updatedState,
+          errorMessage: `${action.error.message}. Reverting todo...`,
+        };
       }
       return updatedState;
     // Copy over the logic that creates savedTodo and adds the isCompleted property when Airtable omits it from the record.
@@ -83,13 +90,14 @@ function reducer(state = initialState, action) {
     // Add isSaving set to false
     case actions.addTodo:
       const savedTodo = {
-        id: records[0].id,
-        title: records[0].fields.title,
-        isCompleted: records[0].fields.isCompleted,
+        id: action.response.records[0].id,
+        title: action.response.records[0].fields.title,
+        isCompleted: action?.response?.records[0]?.fields?.isCompleted || false,
       };
+      console.log(savedTodo);
       return {
         ...state,
-        TodoList: [...state, savedTodo],
+        TodoList: [...state.TodoList, savedTodo],
         isSaving: false,
       };
     case actions.startRequest:
@@ -104,8 +112,9 @@ function reducer(state = initialState, action) {
         isSaving: false,
       };
     case actions.setLoadError:
+      console.log(action);
       return {
-        errorMessage: action.error.message,
+        errorMessage: action.message,
         isLoading: false,
         ...state,
       };
@@ -114,10 +123,28 @@ function reducer(state = initialState, action) {
         ...state,
         errorMessage: "",
       };
+    case actions.setQueryString:
+      if (state.queryString === action.val) return state;
+      return {
+        ...state,
+        queryString: action.val,
+      };
+    case actions.setSortField:
+      if (state.sortField === action.val) return state;
+      return {
+        ...state,
+        sortField: action.val,
+      };
+    case actions.setSortDirection:
+      if (state.sortDirection === action.val) return state;
+      return {
+        ...state,
+        sortDirection: action.val,
+      };
   }
 }
 
-const initialState = {
+export const initialState = {
   TodoList: [],
   isLoading: false,
   isSaving: false,
@@ -126,5 +153,3 @@ const initialState = {
   sortDirection: "desc",
   sortField: "createdTime",
 };
-
-export { initialState, reducer };

@@ -1,28 +1,42 @@
+import { useEffect, useState } from "react";
+import { StyledButton } from "../styles/StyledButton";
+
 function TodosViewForm({
-  sortDirection,
   setSortDirection,
-  sortField,
   setSortField,
   queryString,
   setQueryString,
 }) {
+  const [localQueryString, setLocalQueryString] = useState(queryString);
+
   function preventRefresh(e) {
     e.preventDefault(); // stops the page from reloading
   }
+
+  useEffect(() => {
+    const debounce = setTimeout(() => {
+      setQueryString(localQueryString);
+    }, 500);
+    return () => clearTimeout(debounce);
+  }, [localQueryString, setQueryString]);
+
   return (
     <form onSubmit={preventRefresh}>
       <div style={{ display: "flex" }}>
         <label style={{ padding: 10 }}> Search Todos</label>
         <input
           type="text"
-          value={queryString}
+          value={localQueryString}
           onChange={(e) => {
-            setQueryString(e.target.value);
+            setLocalQueryString(e.target.value);
           }}
         ></input>
-        <button onClick={() => setQueryString("")} disabled={!queryString}>
+        <StyledButton
+          onClick={() => setLocalQueryString("")}
+          disabled={!localQueryString}
+        >
           Clear
-        </button>
+        </StyledButton>
         <label style={{ padding: 10 }}>Sort by</label>
         <select onChange={(e) => setSortField(e.target.value)}>
           <option value="title">Title</option>

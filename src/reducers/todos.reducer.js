@@ -55,7 +55,9 @@ export function reducer(state = initialState, action) {
       return {
         ...state,
         TodoList: state.TodoList.map((todo) =>
-          todo.id === action.id ? { ...todo, isCompleted: true } : todo
+          todo.id === action.id
+            ? { ...todo, isCompleted: !todo.isCompleted }
+            : todo
         ),
       };
     // The logic for revertTodo should be the same as `updateTodo.
@@ -70,7 +72,7 @@ export function reducer(state = initialState, action) {
     // At the end of the clause, return the updated state.
     case actions.updateTodo:
       const updatedTodos = state.TodoList.map((todo) =>
-        todo.id === action.editedTodo.id ? action.editedTodo : todo
+        todo.id === action.updated.id ? action.updated : todo
       );
       const updatedState = {
         ...state,
@@ -112,7 +114,6 @@ export function reducer(state = initialState, action) {
         isSaving: false,
       };
     case actions.setLoadError:
-      console.log(action);
       return {
         errorMessage: action.message,
         isLoading: false,

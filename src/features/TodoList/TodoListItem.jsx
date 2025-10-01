@@ -12,6 +12,7 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
   }
 
   function handleUpdate(event) {
+    onCompleteTodo(todo.id);
     if (isEditing == false) {
       return;
     }

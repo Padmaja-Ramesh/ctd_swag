@@ -38,7 +38,7 @@ function App() {
     const originalTodo = todoState.TodoList.find(
       (todo) => todo.id === editedTodo.id
     );
-    dispatch({ type: todoActions.updateTodo, editedTodo });
+    dispatch({ type: todoActions.updateTodo, updated: editedTodo });
     const payload = {
       records: [
         {
@@ -57,7 +57,7 @@ function App() {
     };
 
     try {
-      const resp = await fetch(encodeUrl(), options);
+      const resp = await fetch(getUrl(), options);
       if (!resp.ok) {
         throw new Error(resp.message);
       }
@@ -67,24 +67,7 @@ function App() {
     } finally {
       dispatch({ type: todoActions.endRequest });
     }
-
-    // const updatedTodos = todoList.map((todo) => {
-    //   console.log(editedTodo);
-    //   return todo.id == editedTodo.id ? { ...editedTodo } : todo;
-    // });
-    // setTodoList(updatedTodos);
   }
-
-  // function addTodo(title) {
-  //   const newTodo = {
-  //     title: title,
-  //     createdTime: Date.now(),
-  //     isCompleted: false,
-  //   };
-  //   setTodoList([...todoList, newTodo]);
-  //   console.log("Updated list:", [...todoList, newTodo]);
-  // }
-  //}
 
   const addTodo = async (newTodo) => {
     console.log("new data added", newTodo);
@@ -93,7 +76,7 @@ function App() {
         {
           fields: {
             title: newTodo,
-            isCompleted: newTodo.isCompleted || false,
+            isCompleted: false,
           },
         },
       ],
@@ -106,7 +89,7 @@ function App() {
 
     try {
       dispatch({ type: todoActions.startRequest });
-      const resp = await fetch(encodeUrl(), options);
+      const resp = await fetch(getUrl(), options);
 
       if (!resp.ok) {
         throw new Error("error adding new todo...");
@@ -116,14 +99,14 @@ function App() {
     } catch (error) {
       dispatch({
         type: todoActions.setErrorMessage,
-        action: error,
+        action: error.message,
       });
     } finally {
       dispatch({ type: todoActions.endRequest });
     }
   };
 
-  function completeTodo(id) {
+  async function completeTodo(id) {
     const findTodo = todoState.TodoList.find((todo) => {
       return todo.id === id;
     });
@@ -131,7 +114,39 @@ function App() {
     if (!findTodo) return;
     else {
       const completedTodo = { ...findTodo, isCompleted: true };
-      dispatch({ type: todoActions.completeTodo, completedTodo });
+      dispatch({ type: todoActions.completeTodo, id });
+      const payload = {
+        records: [
+          {
+            id: completedTodo.id,
+            fields: {
+              isCompleted: completedTodo.isCompleted,
+            },
+          },
+        ],
+      };
+      const options = {
+        method: "PATCH",
+        headers: { Authorization: token, "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      };
+      try {
+        dispatch({ type: todoActions.startRequest });
+        const resp = await fetch(getUrl(), options);
+
+        if (!resp.ok) {
+          throw new Error("error updating todo...");
+        }
+        const response = await resp.json();
+        dispatch({ type: todoActions.updateTodo, updated: completedTodo });
+      } catch (error) {
+        dispatch({
+          type: todoActions.setErrorMessage,
+          action: error.message,
+        });
+      } finally {
+        dispatch({ type: todoActions.endRequest });
+      }
     }
   }
 
@@ -160,13 +175,6 @@ function App() {
       <h1 className={styles.heading}> Code the dream swag </h1>
       <div style={{ display: "flex" }}>
         <TodoForm onAddTodo={addTodo}></TodoForm>
-        {/* <ul>
-        {courses.map((course) => (
-          <li key={course.id}>
-            <h3>{course.title}</h3>
-          </li>
-        ))}
-      </ul> */}
         <TodosViewForm
           sortDirection={todoState.sortDirection}
           setSortDirection={(val) =>
@@ -187,8 +195,10 @@ function App() {
         {todoState.errorMessage ? (
           <div className={styles.errorborder}>
             <hr />
-            <p>{errorMessage}</p>
-            <button onClick={() => setErrorMessage("")}>dismiss </button>
+            <p>{todoState.errorMessage}</p>
+            <button onClick={() => dispatch({ type: todoActions.clearError })}>
+              dismiss
+            </button>
           </div>
         ) : (
           <TodoList

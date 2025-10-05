@@ -13,6 +13,8 @@ import {
   initialState as initialTodosState,
 } from "./reducers/todos.reducer";
 import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
+import Header from "./shared/Header";
+import { Route, Routes } from "react-router-dom";
 
 const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 
@@ -173,15 +175,25 @@ function App() {
 
   return (
     <div>
-      <h1 className={styles.heading}> Code the dream swag </h1>
-      <TodosPage
-        todoState={todoState}
-        addTodo={addTodo}
-        completeTodo={completeTodo}
-        updatedTodo={updatedTodo}
-        dispatch={dispatch}
-        todoActions={todoActions}
-      ></TodosPage>
+      <Header headingTitle={"Code the Dream"}></Header>
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <TodosPage
+              todoState={todoState}
+              addTodo={addTodo}
+              completeTodo={completeTodo}
+              updatedTodo={updatedTodo}
+              dispatch={dispatch}
+              todoActions={todoActions}
+            ></TodosPage>
+          }
+        ></Route>
+        <Route path="/about" element={<h1>About</h1>}></Route>
+        <Route path="/\*" element={<h1>Not Found</h1>}></Route>
+      </Routes>
     </div>
   );
 }

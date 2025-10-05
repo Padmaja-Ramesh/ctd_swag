@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useReducer } from "react";
+import { useState, useEffect, useCallback, useReducer, useMemo } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import TodoList from "../src/features/TodoList/TodoList";
@@ -35,10 +35,13 @@ function App() {
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const indexOfFirstTodo = (currentPage - 1) * itemsPerPage;
   const totalPages = Math.ceil(filteredTodoList.length / itemsPerPage);
-  const currentTodos = filteredTodoList.slice(
-    indexOfFirstTodo,
-    indexOfFirstTodo + itemsPerPage
-  );
+  const currentTodos = useMemo(() => {
+    const indexOfFirstTodo = (currentPage - 1) * itemsPerPage;
+    return filteredTodoList.slice(
+      indexOfFirstTodo,
+      indexOfFirstTodo + itemsPerPage
+    );
+  }, [filteredTodoList, currentPage]);
 
   const getUrl = useCallback(() => {
     let searchQuery = "";

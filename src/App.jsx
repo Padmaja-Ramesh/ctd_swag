@@ -17,6 +17,7 @@ import Header from "./shared/Header";
 import { Route, Routes } from "react-router-dom";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
+import { useSearchParams } from "react-router-dom";
 
 const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 
@@ -28,6 +29,16 @@ function App() {
   // ];
   const token = `Bearer ${import.meta.env.VITE_PAT}`;
   const [todoState, dispatch] = useReducer(todosReducer, initialTodosState);
+  const filteredTodoList = todoState.TodoList;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const itemsPerPage = 15;
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+  const indexOfFirstTodo = (currentPage - 1) * itemsPerPage;
+  const totalPages = Math.ceil(filteredTodoList.length / itemsPerPage);
+  const currentTodos = filteredTodoList.slice(
+    indexOfFirstTodo,
+    indexOfFirstTodo + itemsPerPage
+  );
 
   const getUrl = useCallback(() => {
     let searchQuery = "";
@@ -183,14 +194,43 @@ function App() {
         <Route
           path="/"
           element={
-            <TodosPage
-              todoState={todoState}
-              addTodo={addTodo}
-              completeTodo={completeTodo}
-              updatedTodo={updatedTodo}
-              dispatch={dispatch}
-              todoActions={todoActions}
-            ></TodosPage>
+            <>
+              <TodosPage
+                todoState={todoState}
+                addTodo={addTodo}
+                completeTodo={completeTodo}
+                updatedTodo={updatedTodo}
+                dispatch={dispatch}
+                todoActions={todoActions}
+              ></TodosPage>
+              <div style={{ marginTop: "20px" }}>
+                <button
+                  disabled={currentPage <= 1}
+                  onClick={() =>
+                    setSearchParams({
+                      page: Math.max(1, currentPage - 1).toString(),
+                    })
+                  }
+                >
+                  Prev
+                </button>
+
+                <span style={{ margin: "0 10px" }}>
+                  Page {currentPage} of {totalPages || 1}
+                </span>
+
+                <button
+                  disabled={currentPage >= totalPages}
+                  onClick={() =>
+                    setSearchParams({
+                      page: Math.min(totalPages, currentPage + 1).toString(),
+                    })
+                  }
+                >
+                  Next
+                </button>
+              </div>
+            </>
           }
         ></Route>
         <Route path="/about" element={<About />}></Route>

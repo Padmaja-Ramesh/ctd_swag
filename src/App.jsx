@@ -29,12 +29,18 @@ function App() {
   // ];
   const token = `Bearer ${import.meta.env.VITE_PAT}`;
   const [todoState, dispatch] = useReducer(todosReducer, initialTodosState);
-  const filteredTodoList = todoState.TodoList;
+  const filteredTodoList = useMemo(
+    () => todoState.TodoList.filter((todo) => !todo.isCompleted),
+    [todoState.TodoList]
+  );
   const [searchParams, setSearchParams] = useSearchParams();
-  const itemsPerPage = 15;
+  const itemsPerPage = 10;
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const indexOfFirstTodo = (currentPage - 1) * itemsPerPage;
-  const totalPages = Math.ceil(filteredTodoList.length / itemsPerPage);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredTodoList.length / itemsPerPage)
+  );
   const currentTodos = useMemo(() => {
     const indexOfFirstTodo = (currentPage - 1) * itemsPerPage;
     return filteredTodoList.slice(
@@ -199,7 +205,7 @@ function App() {
           element={
             <>
               <TodosPage
-                todoState={todoState}
+                todoState={{ ...todoState, TodoList: currentTodos }}
                 addTodo={addTodo}
                 completeTodo={completeTodo}
                 updatedTodo={updatedTodo}

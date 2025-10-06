@@ -27,7 +27,6 @@ export const actions = {
 export function reducer(state = initialState, action) {
   switch (action.type) {
     case actions.fetchTodos:
-      console.log(state);
       return {
         isLoading: true,
         ...state,
@@ -42,7 +41,6 @@ export function reducer(state = initialState, action) {
         id: record.id,
         ...record.fields,
       }));
-      console.log(updateTodos);
       return {
         ...state,
         TodoList: updateTodos,
@@ -96,7 +94,6 @@ export function reducer(state = initialState, action) {
         title: action.response.records[0].fields.title,
         isCompleted: action?.response?.records[0]?.fields?.isCompleted || false,
       };
-      console.log(savedTodo);
       return {
         ...state,
         TodoList: [...state.TodoList, savedTodo],

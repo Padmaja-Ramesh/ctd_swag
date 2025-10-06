@@ -12,7 +12,6 @@ function Header({ headingTitle }) {
       setTitle("Todo List");
     } else if (location.pathname == "/about") {
       setTitle("About");
-      console.log(title);
     } else {
       setTitle("Not Found");
     }

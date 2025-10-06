@@ -95,7 +95,6 @@ function App() {
   }
 
   const addTodo = async (newTodo) => {
-    console.log("new data added", newTodo);
     const payload = {
       records: [
         {

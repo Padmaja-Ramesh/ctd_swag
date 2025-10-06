@@ -2,11 +2,9 @@ import TodoListItem from "./TodoListItem";
 import styles from "./TodoListItem.module.css";
 
 function TodoList({ todoList, onCompleteTodo, onUpdateTodo, isLoading }) {
-  console.log(todoList);
   const incompletedTodoList = todoList.filter((todo) => !todo.isCompleted);
   // const completedTodoList = todoList.filter((todo) => todo.isCompleted == true);
 
-  console.log("filtered todo", incompletedTodoList);
   return (
     <>
       {incompletedTodoList.length > 0 ? (

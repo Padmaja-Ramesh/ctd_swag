@@ -2,12 +2,9 @@ import TodoListItem from "./TodoListItem";
 import styles from "./TodoListItem.module.css";
 
 function TodoList({ todoList, onCompleteTodo, onUpdateTodo, isLoading }) {
-  const incompletedTodoList = todoList.filter(
-    (todo) => !todo.isCompleted == true
-  );
+  const incompletedTodoList = todoList.filter((todo) => !todo.isCompleted);
   // const completedTodoList = todoList.filter((todo) => todo.isCompleted == true);
 
-  console.log("filtered todo", incompletedTodoList);
   return (
     <>
       {incompletedTodoList.length > 0 ? (
@@ -21,15 +18,6 @@ function TodoList({ todoList, onCompleteTodo, onUpdateTodo, isLoading }) {
               onUpdateTodo={onUpdateTodo}
             />
           ))}
-          {/* <h1>Completed todo list Items are : </h1>
-          {completedTodoList.map((todo) => (
-            <TodoListItem
-              key={todo.id}
-              todo={todo}
-              onCompleteTodo={onCompleteTodo}
-              onUpdateTodo={onUpdateTodo}
-            />
-          ))} */}
         </>
       ) : (
         <>

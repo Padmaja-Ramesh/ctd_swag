@@ -1,10 +1,10 @@
 import styled from "styled-components";
 
-function TextInputWithLabel({ elementId, labelText, onChange, ref, value }) {
-  const StyledInput = styled.input`
-    background: white;
-  `;
+const StyledInput = styled.input`
+  background: white;
+`;
 
+function TextInputWithLabel({ elementId, labelText, onChange, ref, value }) {
   return (
     <>
       <label htmlFor={elementId} style={{ padding: 10 }}>
@@ -14,7 +14,7 @@ function TextInputWithLabel({ elementId, labelText, onChange, ref, value }) {
         type="text"
         id={elementId}
         onChange={onChange}
-        red={ref}
+        ref={ref}
         value={value}
         placeholder="add todo"
       ></StyledInput>
